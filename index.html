@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Что посмотреть сегодня — подбор фильма или сериала по настроению</title>
+<meta name="description" content="Не знаете, что посмотреть вечером? Выберите настроение — комедия, триллер, фантастика, драма — и получите фильм или сериал с рейтингом Кинопоиска выше 6,8">
+<meta property="og:title" content="Что посмотреть сегодня">
+<meta property="og:description" content="Фильм или сериал на вечер по настроению — за один клик">
+<meta property="og:image" content="https://kochurin.github.io/chto-posmotret/preview.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1b0d36;--ink2:#5b4a7a;--lav:#b4a3d8;--gold:#ffe27a;--card:#fffdf7;--line:#1b0d3614}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{min-height:100vh;font-family:Montserrat,system-ui,sans-serif;color:var(--ink);
+ background:radial-gradient(ellipse 80% 60% at 30% 10%,#fffaf0 0%,#f6e7b4 55%,#e8c46a 100%) fixed}
+.wrap{max-width:860px;margin:0 auto;padding:40px 16px 40px}
+.k{font-weight:700;font-size:13px;letter-spacing:6px;text-transform:uppercase}
+h1{margin:14px 0 0;font-weight:900;font-size:clamp(44px,9vw,84px);line-height:.95;letter-spacing:-2px;text-transform:uppercase}
+h1 span{display:block;color:var(--lav)}
+.lead{margin:18px 0 0;font-size:17px;line-height:1.5;color:var(--ink2);max-width:560px}
+.panel{margin-top:28px;display:grid;gap:16px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.lbl{font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--ink2);width:100%;margin-bottom:2px}
+.chip{font:inherit;font-size:15px;font-weight:600;border:0;border-radius:40px;padding:10px 16px;cursor:pointer;
+ background:#ffffffa8;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--line)}
+.chip[aria-pressed=true]{background:var(--ink);color:var(--gold);box-shadow:none}
+.go{font:inherit;font-weight:800;font-size:18px;border:0;border-radius:40px;padding:16px 30px;cursor:pointer;background:var(--ink);color:var(--gold);letter-spacing:1px;text-transform:uppercase}
+.card{margin-top:26px;background:var(--card);border-radius:24px;padding:26px 24px;box-shadow:0 30px 60px #1b0d3618;display:none}
+.card.show{display:block;animation:in .35s ease}
+@keyframes in{from{opacity:0;transform:translateY(10px)}}
+.top{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}
+.title{margin:0;font-size:clamp(26px,5vw,38px);font-weight:900;line-height:1.05;letter-spacing:-.5px}
+.meta{margin-top:8px;font-size:15px;color:var(--ink2);font-weight:500}
+.rate{flex:none;text-align:center;background:var(--ink);color:var(--gold);border-radius:16px;padding:10px 12px;min-width:74px}
+.rate b{display:block;font-size:26px;font-weight:900;line-height:1}
+.rate small{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#fff}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.tag{font-size:13px;font-weight:600;background:#b4a3d833;color:var(--ink);border-radius:20px;padding:5px 11px}
+.desc{margin:14px 0 0;font-size:16px;line-height:1.5}
+.desc:first-letter{text-transform:uppercase}
+.acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.btn{font:inherit;font-size:15px;font-weight:700;border:0;border-radius:40px;padding:12px 18px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.b1{background:var(--ink);color:var(--gold)}
+.b2{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 2px var(--ink)}
+.empty{margin-top:26px;font-size:16px;color:var(--ink2);display:none}
+.promo{margin-top:30px;padding:20px 22px;border-radius:20px;background:var(--ink);color:#fff;display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;justify-content:space-between}
+.promo b{color:var(--gold);font-size:18px}
+.promo p{margin:4px 0 0;font-size:14px;color:#d9d0ee}
+.promo a{color:var(--ink);background:var(--gold);text-decoration:none;font-weight:800;border-radius:40px;padding:12px 18px;white-space:nowrap}
+footer{margin-top:28px;font-size:13px;line-height:1.6;color:var(--ink2)}
+footer a{color:var(--ink)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--gold);padding:12px 18px;border-radius:30px;font-weight:700;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.on{opacity:1}
+@media (max-width:560px){.card{padding:20px 18px}.rate{min-width:64px}.rate b{font-size:22px}.go{width:100%}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="k">Что посмотреть сегодня</div>
+  <h1>Фильм<span>на вечер</span></h1>
+  <p class="lead">Выберите, что хочется, и нажмите кнопку. Только фильмы и сериалы с рейтингом Кинопоиска от 6,8</p>
+
+  <div class="panel">
+    <div class="row" id="type"><div class="lbl">Что смотрим</div></div>
+    <div class="row" id="mood"><div class="lbl">Настроение</div></div>
+    <div class="row" id="origin"><div class="lbl">Откуда</div></div>
+    <div><button class="go" id="go">Подобрать</button></div>
+  </div>
+
+  <article class="card" id="card">
+    <div class="top">
+      <div><h2 class="title" id="t"></h2><div class="meta" id="meta"></div></div>
+      <div class="rate"><b id="r"></b><small>Кинопоиск</small></div>
+    </div>
+    <div class="tags" id="tags"></div>
+    <p class="desc" id="desc"></p>
+    <div class="acts">
+      <button class="btn b1" id="bot">Найти в боте</button>
+      <a class="btn b2" id="kp" target="_blank" rel="noopener">Кинопоиск</a>
+      <a class="btn b2" id="tr" target="_blank" rel="noopener">Трейлер</a>
+      <button class="btn b2" id="next">Другой</button>
+      <button class="btn b2" id="share">Поделиться</button>
+    </div>
+  </article>
+  <p class="empty" id="empty">Под такой набор ничего не нашлось. Снимите один из фильтров</p>
+
+  <div class="promo">
+    <div><b>Новинки каждый день</b><p>Подборки, новые серии и фильмы недели в канале</p></div>
+    <a href="https://t.me/filmy_segodnya" target="_blank" rel="noopener">Открыть канал</a>
+  </div>
+
+  <footer>
+    Рейтинги — Кинопоиск, жанры и описания — <a href="https://www.wikidata.org/" target="_blank" rel="noopener">Wikidata</a>. Бот, который найдёт фильм по названию: <a href="https://t.me/chto_segodnya_film_bot" target="_blank" rel="noopener">@chto_segodnya_film_bot</a>
+  </footer>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const BOT = "https://t.me/chto_segodnya_film_bot";
+const $ = id => document.getElementById(id);
+let DATA = null, pool = [], cur = null;
+const seen = new Set();
+const state = { type: "all", mood: "any", origin: "any" };
+
+function chips(box, key, list) {
+  for (const [val, label] of list) {
+    const b = document.createElement("button");
+    b.className = "chip"; b.textContent = label; b.dataset.v = val;
+    b.setAttribute("aria-pressed", state[key] === val);
+    b.onclick = () => {
+      state[key] = val;
+      box.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", c.dataset.v === val));
+      pick();
+    };
+    box.appendChild(b);
+  }
+}
+
+function filtered() {
+  return DATA.films.filter(f =>
+    (state.type === "all" || (state.type === "series") === f.s) &&
+    (state.mood === "any" || f.m.includes(state.mood)) &&
+    (state.origin === "any" || (state.origin === "ru") === f.ru));
+}
+
+function weightedPick(list) {
+  const fresh = list.filter(f => !seen.has(f.n));
+  const from = fresh.length ? fresh : list;
+  if (!fresh.length) seen.clear();
+  let total = 0;
+  const w = from.map(f => { const x = Math.pow(Math.max(f.r - 6.5, .2), 2); total += x; return x; });
+  let rnd = Math.random() * total;
+  for (let i = 0; i < from.length; i++) { rnd -= w[i]; if (rnd <= 0) return from[i]; }
+  return from[from.length - 1];
+}
+
+const clean = g => g.replace(/^(фильм|телесериал)-/, "").replace(/ (фильм|телесериал|сериал)$/, "");
+
+function show(f) {
+  cur = f; seen.add(f.n);
+  $("t").textContent = f.n;
+  const parts = [f.s ? "Сериал" : "Фильм", f.y, f.ru ? "Россия" : null, f.t && !f.s ? `${Math.floor(f.t / 60) ? Math.floor(f.t / 60) + " ч " : ""}${f.t % 60} мин` : null, f.dir && !f.s ? "реж. " + f.dir : null];
+  $("meta").textContent = parts.filter(Boolean).join(" · ");
+  $("r").textContent = f.r.toFixed(1).replace(".", ",");
+  $("tags").innerHTML = "";
+  for (const g of f.g) { const s = document.createElement("span"); s.className = "tag"; s.textContent = clean(g); $("tags").appendChild(s); }
+  $("desc").textContent = f.d || "";
+  $("desc").style.display = f.d ? "" : "none";
+  $("kp").href = f.kp ? `https://www.kinopoisk.ru/film/${f.kp}/` : `https://www.kinopoisk.ru/index.php?kp_query=${encodeURIComponent(f.n)}`;
+  $("tr").href = `https://www.youtube.com/results?search_query=${encodeURIComponent(f.n + " " + (f.y || "") + " трейлер")}`;
+  $("card").classList.remove("show"); void $("card").offsetWidth; $("card").classList.add("show");
+  $("empty").style.display = "none";
+  const box = $("card").getBoundingClientRect();
+  if (box.top > innerHeight * .6 || box.top < 0) $("card").scrollIntoView({ behavior: "smooth", block: "start" });
+  try { history.replaceState(null, "", "#" + encodeURIComponent(f.n)); } catch (e) {}
+}
+
+function pick() {
+  pool = filtered();
+  if (!pool.length) { $("card").classList.remove("show"); $("empty").style.display = "block"; return; }
+  show(weightedPick(pool));
+}
+
+function toast(msg) { const t = $("toast"); t.textContent = msg; t.classList.add("on"); setTimeout(() => t.classList.remove("on"), 2200); }
+
+async function copy(text) {
+  try { await navigator.clipboard.writeText(text); return true; } catch (e) { return false; }
+}
+
+$("go").onclick = pick;
+$("next").onclick = pick;
+$("bot").onclick = async () => {
+  const ok = await copy(cur.n);
+  toast(ok ? "Название скопировано — вставьте его в боте" : "Отправьте боту название: " + cur.n);
+  setTimeout(() => window.open(BOT, "_blank"), 600);
+};
+$("share").onclick = async () => {
+  const url = location.href.split("#")[0] + "#" + encodeURIComponent(cur.n);
+  const text = `Смотрю сегодня «${cur.n}» (${cur.y}), Кинопоиск ${cur.r}. А тебе что подобрать?`;
+  try { if (navigator.share) { await navigator.share({ text, url }); return; } } catch (e) { return; }
+  toast(await copy(text + " " + url) ? "Ссылка скопирована" : url);
+};
+
+fetch("films.json").then(r => r.json()).then(d => {
+  DATA = d;
+  chips($("type"), "type", [["all", "Всё равно"], ["movie", "Фильм"], ["series", "Сериал"]]);
+  chips($("mood"), "mood", [["any", "Любое"], ...d.moods]);
+  chips($("origin"), "origin", [["any", "Любое"], ["foreign", "Зарубежное"], ["ru", "Наше"]]);
+  const want = decodeURIComponent(location.hash.slice(1));
+  const shared = want && d.films.find(f => f.n === want);
+  if (shared) show(shared);
+});
+</script>
+</body>
+</html>
